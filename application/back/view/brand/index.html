@@ -1,0 +1,129 @@
+{extend name="common:layout" /}
+
+{block name="content"}
+<div id="content">
+    <div class="page-header">
+        <div class="container-fluid">
+            <div class="pull-right">
+                <a href="{:url('set')}" data-toggle="tooltip" title="新增" class="btn btn-primary"> <i
+                        class="fa fa-plus"></i>
+                </a>
+                <button type="button" data-toggle="tooltip" title="删除" class="btn btn-danger"
+                        onclick="confirm('确认？') ? $('#form-index').submit() : false;">
+                    <i class="fa fa-trash-o"></i>
+                </button>
+            </div>
+            <h1>品牌管理</h1>
+            <ul class="breadcrumb">
+                <li>
+                    <a href="{:url('manage/dashboard')}">首页</a>
+                </li>
+                <li>
+                    <a href="{:url('index')}">品牌</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="container-fluid">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">
+                    <i class="fa fa-list"></i>
+                    品牌列表
+                </h3>
+            </div>
+            <div class="panel-body">
+                <!--搜索是获取服务器端资源, 采用get请求-->
+                <form action="{:url('index')}" method="get">
+                    <div class="well">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <label class="control-label" for="input-filter_title">品牌</label>
+                                    <input type="text" name="filter_title" value="{$filter_title}" placeholder="商品名称" id="input-filter_title"
+                                           class="form-control"/>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <button type="submit" id="button-filter" class="btn btn-primary pull-right">
+                                    <i class="fa fa-search"></i>
+                                    筛选
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+
+                <form action="{:url('batch')}" method="post" id="form-index">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover">
+                            <thead><!--表头-->
+                            <tr>
+                                <td style="width: 1px;" class="text-center">
+                                    <input type="checkbox" id="select-all" title="全选"/>
+                                </td>
+                                <td class="text-center">LOGO</td>
+                                <td class="text-left">
+                                    <a href="{:urlOrder('index', $pageQuery, 'title', $order_field, $order_type)}" class="{:classOrder('title', $order_field, $order_type)}">品牌</a>
+                                </td>
+                                <td class="text-left">
+                                    <a href="{:urlOrder('index', $pageQuery, 'site', $order_field, $order_type)}" class="{:classOrder('site', $order_field, $order_type)}">官网</a>
+                                </td>
+                                <td class="text-right">
+                                    <a href="{:urlOrder('index', $pageQuery, 'sort', $order_field, $order_type)}" class="{:classOrder('sort', $order_field, $order_type)}">排序</a>
+                                </td>
+                                <td class="text-right">管理</td>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {volist name="rows" id="row"}
+                            <tr>
+                                <td class="text-center">
+                                    <input type="checkbox" name="selected[]" value="{$row['id']}">
+                                </td>
+                                <td class="text-center">
+                                    <img src="" alt="LOGO图像" class="img-thumbnail" style="max-width: 40px"/>
+                                </td>
+                                <td class="text-left">{$row['title']}</td>
+                                <td class="text-left">{$row['site']}</td>
+                                <td class="text-right">{$row['sort']}</td>
+                                <td class="text-right">
+                                    <a href="{:url('set', ['id'=>$row['id']])}" data-toggle="tooltip" title="编辑"
+                                       class="btn btn-primary">
+                                        <i class="fa fa-pencil"></i>
+                                    </a>
+                                    <!--set方法后面传递可以传递参数-->
+                                </td>
+                            </tr>
+                            {/volist}
+                            </tbody>
+                        </table>
+                    </div>
+                </form>
+
+                <div class="row">
+                    <div class="col-sm-6 text-left">
+                        {$rows->render()}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{/block}
+
+{block name="appendJs"}
+<script type="text/javascript">
+    $(function() {
+        $('#select-all').click(function() {
+            // 找到需要操作的记录的checkbox,控制状态, 为当前全选checkbox的checked状态
+            // :checkbox == input[type=checkbox]
+            $(':checkbox[name="selected[]"]').prop('checked', $(this).prop('checked'));
+        });
+    });
+</script>
+{/block}
